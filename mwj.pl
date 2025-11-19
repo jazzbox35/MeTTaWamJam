@@ -1,4 +1,4 @@
-/*  metta_wam_jam.pl - HTTP Metta Server
+/*  mwj.pl - HTTP Metta Server
 %
 %   @author Mike Archbold
 %   @version 0.1
@@ -9,7 +9,7 @@
 %   server exposes a `/metta` endpoint for evaluating MeTTa strings and
 %   a `/stop` endpoint to gracefully shut down the server.
 %
-%   The Metta server loads a MeTTa interpreter (from `src/metta.pl`), handles
+%   The Metta server loads a MeTTa transpiler, PeTTa from `src/metta.pl`, handles
 %   optional MeTTa file input from the command-line arguments, and initializes
 %   the HTTP server on a configurable port (default 5000).
 %
@@ -19,7 +19,7 @@
 %
 %   @usage
 %     % Start the server with optional initial metta code / atomspace:
-%     $ swipl metta_wam_jam.pl <metta_file>
+%     $ swipl mwj.pl <metta_file>
 %
 %     % Evaluate MeTTa expressions via POST example:
 %     $ curl -X POST http://localhost:5000/metta -H 'Content-Type: text/plain' --data '!(+ 1 1)'
@@ -37,7 +37,7 @@
 :- use_module(library(http/http_dispatch)).
 :- use_module(library(http/http_client)).
 :- use_module(library(http/http_json)).  
-:- use_module(library(http/json)).  
+:- use_module(library(json)).  
 
 
 % Register HTTP handlers for the /metta and /stop routes.
@@ -107,14 +107,19 @@ server(Port) :-
 %     % POST request:
 %     $ curl -X POST http://localhost:5000/metta -H 'Content-Type: text/plain' --data '!(+ 1 1)'
 %
-mettaX(Request) :-
+metta(Request) :-
         http_read_data(Request, Body, [to(string)]),
         format('Content-type: application/json~n~n'),
         process_metta_string(Body, Result),
-        %json_write(current_output, json([result=Result])).
-        reply_json(json([result = Result])).
+        % trap errors...
 
-metta(Request) :-
+        % format correctly...
+        %maplist(swrite,Result,ResultsR),
+        %maplist(format("~w~n"), ResultsR),
+        json_write(current_output, json([result=Result])).
+        %reply_json(json([result = Result])).
+
+mettaX(Request) :-
     http_read_data(Request, Body, [to(string)]),
 
     % suppress ALL stdout from process_metta_string/2
