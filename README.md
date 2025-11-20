@@ -23,11 +23,12 @@ Note: the order of ports is host:container; so if you want your machine to call 
 <B>curl -X POST http&#58;//localhost:5000/metta -H "Content-Type: text/plain" --data '!(+ 1 2)'</B>
 <P><P>
 The above command will return a result of [3] if the installation worked.
+For curl commands, always put single quotes (') around your metta query.
 
 <hr>
 4. <B>curl -X POST http&#58;//localhost:5000/stop</B>
 <P><P>
-The above will shut down the server and docker container gracefully when done (again run from your machine outside docker). For curl commands, always put single quotes (') around your metta query.
+The above will shut down the server and docker container gracefully when done (again run from your machine outside docker). 
 
 
 
