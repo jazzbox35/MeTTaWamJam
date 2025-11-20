@@ -4,7 +4,7 @@ MWJ is lightweight, blazing fast SWI-Prolog HTTP server for MeTTa. It provides a
 
 If you just want to use the handy default docker image, you need not clone this repo but simply follow these easy command steps to get started:
 
-1) docker pull jazzbox35/mwj
+1) <B>docker pull jazzbox35/mwj</B>
 
 2) docker run --rm -it -p 5000:5000 jazzbox35/mwj:latest
 
