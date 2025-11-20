@@ -27,7 +27,7 @@ The above command will return a result of [3] if the installation worked.
 <hr>
 4. <B>curl -X POST http&#58;//localhost:5000/stop</B>
 <P><P>
-The above will shut down the server and docker container gracefully when done (again run from your machine outside docker).
+The above will shut down the server and docker container gracefully when done (again run from your machine outside docker). For curl commands, always put single quotes (') around your metta query.
 
 
 
