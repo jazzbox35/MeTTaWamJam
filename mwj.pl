@@ -70,13 +70,13 @@ server(Port) :-
 %
 %   Loads a MeTTa file if one is provided as a command-line argument.
 %   If no arguments are passed or the special atom `mork` is used,
-%   this step is skipped.
+%   this step is skipped. Also will continue if it can't find the 
+%   input MeTTa code / atomspace.
 %
 %   Useful for preloading a MeTTa script or knowledge base on startup.
 %
 %   @example
-%     $ swipl metta_server.pldoc examples/demo.metta
-%     $ swipl metta_server.pldoc
+%     $ swipl mwj.pl  MyAtomSpace.metta
 %
 %   @note The use of `mork` as a no-op flag is for compatibility in case used
 %
@@ -85,12 +85,15 @@ server(Port) :-
         true                                  % do nothing
    ; Args = [mork] ->
         true                                  % do nothing
-   ; Args = [File|_] ->
-        file_directory_name(File, Dir),
-        assertz(working_dir(Dir)),
-        load_metta_file(File, Results),
-        maplist(swrite, Results, ResultsR),
-        maplist(format("~w~n"), ResultsR)
+   ; Args = [File|_] ->                       % if atomspace passed
+        (   exists_file(File)
+        ->  file_directory_name(File, Dir),
+            assertz(working_dir(Dir)),
+            load_metta_file(File, Results),
+            maplist(swrite, Results, ResultsR),
+            maplist(format("~w~n"), ResultsR)
+        ;   true                              % file not found → silently skip
+        )
    ).
 
 %!  metta(+Request) is det.
@@ -107,27 +110,27 @@ server(Port) :-
 %     % POST request:
 %     $ curl -X POST http://localhost:5000/metta -H 'Content-Type: text/plain' --data '!(+ 1 1)'
 %
-metta(Request) :-
+mettaX(Request) :-
         http_read_data(Request, Body, [to(string)]),
         format('Content-type: application/json~n~n'),
         process_metta_string(Body, Result),
         % trap errors...
-
+        swrite(Result,ResultR),
         % format correctly...
         %maplist(swrite,Result,ResultsR),
         %maplist(format("~w~n"), ResultsR),
-        json_write(current_output, json([result=Result])).
+        json_write(current_output, json([result=ResultR])).
         %reply_json(json([result = Result])).
 
-mettaX(Request) :-
+metta(Request) :-
     http_read_data(Request, Body, [to(string)]),
 
     % suppress ALL stdout from process_metta_string/2
     with_output_to(string(_),
         process_metta_string(Body, Result)
     ),
-
-    reply_json(json([result = Result])).
+    swrite(Result,ResultR),
+    reply_json(json([result = ResultR])).
 
 
 %!  stop(+Request) is det.
