@@ -8,7 +8,8 @@ MWJ is lightweight, blazing fast SWI-Prolog HTTP server for MeTTa. It provides a
 <hr>
 <B>docker pull jazzbox35/mwj</B>
 <hr>
-2) <B>docker run --rm -it -p 5000:5000 mwj 
+<B>docker run --rm -it -p 5000:5000 mwj 
+<P>
 jazzbox35/mwj:latest</B>
 <P>
 *OR WITH YOUR ATOMSPACE*
